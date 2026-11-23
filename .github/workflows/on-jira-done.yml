@@ -1,0 +1,71 @@
+name: Handle Jira Ticket Done
+
+on:
+  repository_dispatch:
+    types: [jira-ticket-done]
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-create-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dev branch
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run automated tests
+        run: npm test
+
+      - name: Create and push next branch from dev
+        env:
+          COMPLETED_KEY: ${{ github.event.client_payload.completed_key }}
+          NEXT_KEY: ${{ github.event.client_payload.next_key }}
+          NEXT_SUMMARY: ${{ github.event.client_payload.next_summary }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$NEXT_KEY" ]; then
+            echo "No next_key provided in client_payload. Skipping branch creation."
+            exit 0
+          fi
+
+          SLUG=$(printf '%s' "$NEXT_SUMMARY" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed -E 's/[^a-z0-9]+/-/g; s/^-+//; s/-+$//' \
+            | cut -c1-40)
+
+          KEY_LOWER=$(printf '%s' "$NEXT_KEY" | tr '[:upper:]' '[:lower:]')
+          if [ -n "$SLUG" ]; then
+            NEW_BRANCH="feat/${KEY_LOWER}-${SLUG}"
+          else
+            NEW_BRANCH="feat/${KEY_LOWER}"
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin dev
+          git checkout -B dev origin/dev
+
+          if git ls-remote --exit-code --heads origin "$NEW_BRANCH" >/dev/null 2>&1; then
+            echo "Branch '$NEW_BRANCH' already exists on origin. Skipping creation."
+            exit 0
+          fi
+
+          git checkout -b "$NEW_BRANCH" dev
+          git push -u origin "$NEW_BRANCH"
+          echo "Created and pushed branch '$NEW_BRANCH' from 'dev' after ticket '$COMPLETED_KEY' completed."
