@@ -1,6 +1,5 @@
 import AppLayout from './layouts/AppLayout';
 import EmptyState from './composants/EmptyState';
-import './App.css';
 
 function App() {
   return (
