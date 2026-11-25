@@ -12,10 +12,14 @@ export const storesApi = createResourceApi('stores');
 export const toolsApi = createResourceApi('tools');
 export const usersApi = createResourceApi('users');
 export const reservationsApi = createResourceApi('reservations');
+export const authApi = {
+  login: (credentials) => apiClient.post('/auth/login', credentials),
+};
 
 export default {
   stores: storesApi,
   tools: toolsApi,
   users: usersApi,
   reservations: reservationsApi,
+  auth: authApi,
 };
