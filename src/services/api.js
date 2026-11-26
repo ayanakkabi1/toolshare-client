@@ -15,6 +15,10 @@ export const reservationsApi = createResourceApi('reservations');
 export const authApi = {
   login: (credentials) => apiClient.post('/auth/login', credentials),
 };
+export const installationApi = {
+  getStatus: () => apiClient.get('/installation/status'),
+  install: (admin) => apiClient.post('/installation', admin),
+};
 
 export default {
   stores: storesApi,
@@ -22,4 +26,5 @@ export default {
   users: usersApi,
   reservations: reservationsApi,
   auth: authApi,
+  installation: installationApi,
 };

@@ -1,20 +1,8 @@
 import { useEffect, useState } from 'react';
-import { authApi } from './services/api';
-
-const roleDestinations = {
-  admin: '/admin',
-  owner: '/owner',
-  user: '/dashboard',
-};
+import { authenticate, normalizeRole, roleDestinations } from './services/auth';
+import InstallationPage from './pages/InstallationPage';
 
 const routeRoles = Object.fromEntries(Object.entries(roleDestinations).map(([role, path]) => [path, role]));
-
-function normalizeRole(value = '') {
-  const normalized = String(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  if (['admin', 'administrateur', 'administrator'].includes(normalized)) return 'admin';
-  if (['owner', 'proprietaire', 'proprietor'].includes(normalized)) return 'owner';
-  return 'user';
-}
 
 function ToolshareLogo({ light = false }) {
   return (
@@ -101,16 +89,7 @@ function App() {
     setMessage('');
 
     try {
-      const { data: responseData } = await authApi.login(form);
-      const data = responseData.data || responseData;
-      const token = data.accessToken || data.token || data.access_token;
-      const responseUser = data.user || data.utilisateur || {};
-      const role = normalizeRole(responseUser.role || data.role || responseUser.type);
-      const user = { ...responseUser, role: responseUser.role || data.role || role };
-
-      if (token) localStorage.setItem('accessToken', token);
-      if (user) localStorage.setItem('toolshare:user', JSON.stringify(user));
-      sessionStorage.setItem('toolshare:redirect', roleDestinations[role] || '/dashboard');
+      await authenticate(form);
       setMessage('Connexion réussie. Votre espace se prépare…');
       setStatus('success');
     } catch (error) {
@@ -126,6 +105,7 @@ function App() {
   const isBusy = status === 'loading' || status === 'success';
   const activeRole = routeRoles[window.location.pathname];
 
+  if (window.location.pathname === '/installation') return <InstallationPage />;
   if (activeRole) return <RoleSpace role={activeRole} />;
 
   return (
