@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { authenticate, normalizeRole, roleDestinations } from './services/auth';
-import InstallationPage from './pages/InstallationPage';
+import { roleDestinations } from './services/auth';
+import { useAuth } from './contexts/AuthContext';
 
 const routeRoles = Object.fromEntries(Object.entries(roleDestinations).map(([role, path]) => [path, role]));
 
@@ -20,39 +20,35 @@ function ToolshareLogo({ light = false }) {
 }
 
 function RoleSpace({ role }) {
-  const [user] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('toolshare:user') || '{}');
-    } catch {
-      return {};
-    }
-  });
+  const { user, logout, accessDenied, clearAccessDenied } = useAuth();
 
   useEffect(() => {
-    const savedRole = normalizeRole(user.role || user.type);
-    if (!localStorage.getItem('accessToken')) {
+    if (!user) {
       window.location.replace('/');
-    } else if (savedRole && savedRole !== role) {
-      window.location.replace(roleDestinations[savedRole] || '/dashboard');
+    } else if (user.role !== role) {
+      window.location.replace(roleDestinations[user.role] || '/dashboard');
     }
-  }, [role, user.role]);
+  }, [role, user]);
 
   const roleLabels = { admin: 'Administration', owner: 'Espace propriétaire', user: 'Mon espace' };
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('toolshare:user');
-    window.location.assign('/');
-  };
 
   return (
     <main className="role-space">
       <header className="role-space__header">
         <ToolshareLogo />
-        <button className="logout-button" type="button" onClick={handleLogout}>Se déconnecter</button>
+        <button className="logout-button" type="button" onClick={logout}>Se déconnecter</button>
       </header>
       <section className="role-space__content">
+        {accessDenied && (
+          <div className="access-denied" role="alert">
+            <span>Vous n’avez pas les droits nécessaires pour effectuer cette action.</span>
+            <button type="button" onClick={clearAccessDenied} aria-label="Fermer le message">
+              Fermer
+            </button>
+          </div>
+        )}
         <span className="eyebrow eyebrow--purple">{roleLabels[role]}</span>
-        <h1>Bonjour{user.name || user.prenom ? `, ${user.name || user.prenom}` : ''} !</h1>
+        <h1>Bonjour{user?.name || user?.prenom ? `, ${user.name || user.prenom}` : ''} !</h1>
         <p>Bienvenue dans votre espace Toolshare.</p>
         <div className="role-space__card"><span className="role-space__icon">✦</span><div><strong>Votre espace est prêt</strong><p>Les outils et activités liés à votre compte apparaîtront ici.</p></div></div>
       </section>
@@ -61,6 +57,7 @@ function RoleSpace({ role }) {
 }
 
 function App() {
+  const { login } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [status, setStatus] = useState('idle');
   const [message, setMessage] = useState('');
@@ -89,7 +86,7 @@ function App() {
     setMessage('');
 
     try {
-      await authenticate(form);
+      await login(form);
       setMessage('Connexion réussie. Votre espace se prépare…');
       setStatus('success');
     } catch (error) {

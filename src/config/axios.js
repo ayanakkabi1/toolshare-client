@@ -20,7 +20,17 @@ apiClient.interceptors.request.use((config) => {
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error)
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('toolshare:user');
+      sessionStorage.removeItem('toolshare:redirect');
+      globalThis.dispatchEvent(new Event('toolshare:session-expired'));
+    } else if (error.response?.status === 403) {
+      globalThis.dispatchEvent(new Event('toolshare:access-forbidden'));
+    }
+    return Promise.reject(error);
+  },
 );
 
 export default apiClient;

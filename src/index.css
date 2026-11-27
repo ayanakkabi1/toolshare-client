@@ -92,6 +92,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .logout-button { padding: 10px 16px; border: 1px solid #e8e4ef; border-radius: 8px; color: #514b5d; background: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
 .logout-button:hover { border-color: #cbbcf0; color: var(--purple); }
 .role-space__content { width: min(760px, calc(100% - 48px)); margin: clamp(60px, 12vh, 120px) auto; }
+.access-denied { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; padding: 14px 16px; border: 1px solid #e9b8b8; border-radius: 10px; color: #742d2d; background: #fff1f1; font-size: 13px; }
+.access-denied button { flex: 0 0 auto; border: 0; color: inherit; background: transparent; font: inherit; font-weight: 700; cursor: pointer; }
 .role-space__content h1 { margin: 12px 0 8px; color: #0A1412; font-family: Manrope, sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: -1.8px; }
 .role-space__content > p { color: #817d8b; font-size: 15px; }
 .role-space__card { display: flex; align-items: flex-start; gap: 14px; margin-top: 38px; padding: 23px; border: 1px solid #edeaf3; border-radius: 14px; background: #fff; box-shadow: 0 10px 25px rgba(35,25,60,.035); }

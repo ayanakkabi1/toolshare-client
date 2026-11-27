@@ -13,11 +13,19 @@ export function normalizeRole(value = '') {
   return 'user';
 }
 
+function removeSecrets(user) {
+  const safeUser = { ...user };
+  for (const key of Object.keys(safeUser)) {
+    if (/password|token|secret|credential/i.test(key)) delete safeUser[key];
+  }
+  return safeUser;
+}
+
 export function getAuthSession(responseData) {
   const data = responseData?.data || responseData || {};
   const responseUser = data.user || data.utilisateur || {};
   const role = normalizeRole(responseUser.role || data.role || responseUser.type);
-  const user = { ...responseUser, role };
+  const user = { ...removeSecrets(responseUser), role };
 
   return {
     token: data.accessToken || data.token || data.access_token,
