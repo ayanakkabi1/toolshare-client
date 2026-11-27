@@ -101,6 +101,34 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .role-space__card strong { color: #302c38; font-size: 14px; }
 .role-space__card p { margin-top: 5px; color: #85818c; font-size: 12px; line-height: 1.6; }
 
+.installation-page { display: grid; min-height: 100vh; place-items: center; padding: 32px 20px; background: linear-gradient(145deg, #edf5f2 0%, #DCEBE6 100%); }
+.installation-card { width: min(100%, 560px); padding: clamp(26px, 6vw, 52px); border: 1px solid rgba(39,82,75,.11); border-radius: 20px; background: #fff; box-shadow: 0 22px 65px rgba(23,50,46,.12); }
+.installation-brand { margin-bottom: 38px; }
+.installation-brand__mark { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 13px; color: #DCEBE6; background: var(--purple); font-family: Manrope, sans-serif; font-size: 24px; font-weight: 800; }
+.installation-heading { margin-bottom: 28px; }
+.installation-heading h1, .installation-state h1 { margin: 11px 0 9px; color: #0A1412; font-family: Manrope, sans-serif; font-size: clamp(29px, 5vw, 37px); font-weight: 700; letter-spacing: -1.4px; line-height: 1.15; }
+.installation-heading p, .installation-state p { margin: 0; color: #65736f; font-size: 14px; line-height: 1.65; }
+.installation-form { display: flex; flex-direction: column; gap: 18px; }
+.installation-form__names { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.installation-field label { display: block; margin-bottom: 7px; color: #17322E; font-size: 12px; font-weight: 700; }
+.installation-field__control { position: relative; }
+.installation-field input { width: 100%; height: 47px; padding: 0 13px; border: 1px solid #d9e2df; border-radius: 8px; color: #0A1412; background: #fff; font-size: 14px; }
+.installation-field input:focus { border-color: #4D7B73; outline: 3px solid rgba(77,123,115,.16); }
+.installation-field input[aria-invalid="true"] { border-color: #b42335; }
+.installation-field__control:has(.installation-password-toggle) input { padding-right: 82px; }
+.installation-password-toggle { position: absolute; top: 50%; right: 12px; padding: 6px 0 6px 7px; transform: translateY(-50%); border: 0; color: var(--purple); background: transparent; font-size: 11px; font-weight: 700; cursor: pointer; }
+.installation-field__error, .installation-form__error { margin: 6px 0 0; color: #a51d2d; font-size: 12px; line-height: 1.5; }
+.installation-form__error { margin: -6px 0 0; }
+.installation-button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 9px; padding: 0 20px; border: 0; border-radius: 8px; color: #fff; background: var(--purple); font-size: 13px; font-weight: 700; text-align: center; cursor: pointer; }
+.installation-button:hover:not(:disabled) { background: var(--purple-dark); }
+.installation-button:disabled { cursor: wait; opacity: .75; }
+.installation-button--full { width: 100%; margin-top: 4px; }
+.installation-note { margin: 19px 0 0; color: #65736f; font-size: 12px; text-align: center; }
+.installation-state { text-align: center; }
+.installation-state .spinner { display: inline-block; width: 23px; height: 23px; margin-top: 18px; color: var(--purple); }
+.installation-state .installation-button { margin-top: 24px; text-decoration: none; }
+.installation-state__icon { display: grid; width: 48px; height: 48px; margin: 0 auto 18px; place-items: center; border-radius: 50%; color: #17322E; background: #DCEBE6; font-size: 24px; font-weight: 700; }
+
 @media (min-width: 1500px) { .login-story { padding-left: max(108px, calc((100vw - 1420px) / 2)); } }
 @media (max-width: 900px) {
   .login-page { grid-template-columns: minmax(360px, .9fr) minmax(410px, 1fr); }
@@ -123,6 +151,12 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
   .login-panel { padding-inline: 19px; }
   .brand--mobile { margin-bottom: 54px; }
   .login-heading h2 { font-size: 29px; }
+}
+@media (max-width: 520px) {
+  .installation-page { align-items: start; padding: 16px 12px; }
+  .installation-card { padding: 24px 20px; border-radius: 15px; }
+  .installation-brand { margin-bottom: 30px; }
+  .installation-form__names { grid-template-columns: 1fr; gap: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }

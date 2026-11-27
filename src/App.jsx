@@ -102,6 +102,7 @@ function App() {
   const isBusy = status === 'loading' || status === 'success';
   const activeRole = routeRoles[window.location.pathname];
 
+  if (window.location.pathname === '/installation') return <InstallationPage />;
   if (activeRole) return <RoleSpace role={activeRole} />;
 
   return (
