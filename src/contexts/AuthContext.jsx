@@ -19,6 +19,7 @@ function readStoredUser() {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(readStoredUser);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   const clearSession = useCallback(() => {
     globalThis.localStorage?.removeItem('accessToken');
@@ -40,13 +41,20 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const handleSessionExpired = () => clearSession();
+    const handleAccessDenied = () => setAccessDenied(true);
     globalThis.addEventListener('toolshare:session-expired', handleSessionExpired);
-    return () => globalThis.removeEventListener('toolshare:session-expired', handleSessionExpired);
+    globalThis.addEventListener('toolshare:access-forbidden', handleAccessDenied);
+    return () => {
+      globalThis.removeEventListener('toolshare:session-expired', handleSessionExpired);
+      globalThis.removeEventListener('toolshare:access-forbidden', handleAccessDenied);
+    };
   }, [clearSession]);
 
+  const clearAccessDenied = useCallback(() => setAccessDenied(false), []);
+
   const value = useMemo(
-    () => ({ user, role: user?.role || null, login, logout, clearSession }),
-    [user, login, logout, clearSession],
+    () => ({ user, role: user?.role || null, login, logout, clearSession, accessDenied, clearAccessDenied }),
+    [user, login, logout, clearSession, accessDenied, clearAccessDenied],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -26,6 +26,8 @@ apiClient.interceptors.response.use(
       localStorage.removeItem('toolshare:user');
       sessionStorage.removeItem('toolshare:redirect');
       globalThis.dispatchEvent(new Event('toolshare:session-expired'));
+    } else if (error.response?.status === 403) {
+      globalThis.dispatchEvent(new Event('toolshare:access-forbidden'));
     }
     return Promise.reject(error);
   },

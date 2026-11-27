@@ -20,7 +20,7 @@ function ToolshareLogo({ light = false }) {
 }
 
 function RoleSpace({ role }) {
-  const { user, logout } = useAuth();
+  const { user, logout, accessDenied, clearAccessDenied } = useAuth();
 
   useEffect(() => {
     if (!user) {
@@ -39,6 +39,14 @@ function RoleSpace({ role }) {
         <button className="logout-button" type="button" onClick={logout}>Se déconnecter</button>
       </header>
       <section className="role-space__content">
+        {accessDenied && (
+          <div className="access-denied" role="alert">
+            <span>Vous n’avez pas les droits nécessaires pour effectuer cette action.</span>
+            <button type="button" onClick={clearAccessDenied} aria-label="Fermer le message">
+              Fermer
+            </button>
+          </div>
+        )}
         <span className="eyebrow eyebrow--purple">{roleLabels[role]}</span>
         <h1>Bonjour{user?.name || user?.prenom ? `, ${user.name || user.prenom}` : ''} !</h1>
         <p>Bienvenue dans votre espace Toolshare.</p>
